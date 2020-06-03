@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Rebuild">
+  <PropertyGroup>
+    <Build>..\Builds</Build>
+    <ProjectFile>..\TestProjectWebApi\TestProjectWebApi.csproj</ProjectFile> 
+    <ProjectName>TestProjectWebApi</ProjectName>
+    <CopyTo>..\Publish</CopyTo>
+  </PropertyGroup> 
+  <Target Name="Clean">
+   <RemoveDir Directories="$(Build)"/>
+   <RemoveDir Directories="$(CopyTo)" />	
+  </Target>
+  <Target Name="Build"> 
+	<MakeDir Directories="$(Build)" Condition="!Exists('$(Build)')" />
+	<MakeDir Directories="$(CopyTo)" Condition="!Exists('$(CopyTo)')" />
+    <MSBuild Projects="$(ProjectFile)" Properties="Configuration=Release;OutputPath=$(Build);OutDir=$(Build)" />  
+    <Exec Command="xcopy /s $(Build) $(CopyTo)" />    
+  </Target>
+  <Target Name="CopyRoslyn">
+	<Exec Command="xcopy /s $(CopyTo)\roslyn\*.* $(CopyTo)\_PublishedWebsites\$(ProjectName)\bin\roslyn\" />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build;CopyRoslyn" />
+</Project>
